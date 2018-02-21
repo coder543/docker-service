@@ -13,3 +13,5 @@ To build and run this:
     dmake release
 
 the `-r` flag simply indicates that the docker container should be run locally once it is completely built, and this will work on debug, release, or any other build mode.
+
+The `Dmake.ini` file is used by `dmake` to automate much of the workflow.
