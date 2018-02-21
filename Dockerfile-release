@@ -18,7 +18,7 @@ COPY --from=0 /usr/src/example-service .
 COPY --from=0 /usr/local/cargo /usr/local/cargo
 COPY . .
 RUN cargo build --release
-RUN cp /usr/src/example-service/target/debug/example-service  /opt/example-service/
+RUN cp /usr/src/example-service/target/release/example-service  /opt/example-service/
 
 FROM ubuntu:bionic as deployment
 WORKDIR /opt/example-service
