@@ -12,4 +12,4 @@ To build and run this:
 
     dmake release
 
-the `-r` flag simply indicates that the docker container should be run once it is completely built, and this will work on debug, release, or any other build mode.
+the `-r` flag simply indicates that the docker container should be run locally once it is completely built, and this will work on debug, release, or any other build mode.
