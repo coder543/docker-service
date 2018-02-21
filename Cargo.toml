@@ -1,0 +1,7 @@
+[package]
+name = "example-service"
+version = "0.1.0"
+authors = ["Josh Leverette <coder543@gmail.com>"]
+
+[dependencies]
+rouille = "2.0.0"

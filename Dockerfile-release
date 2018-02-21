@@ -1,0 +1,27 @@
+FROM rust:latest as dep_cache
+WORKDIR /usr/src/example-service-tomls
+COPY Cargo.toml .
+COPY Cargo.lock .
+WORKDIR /usr/src/
+RUN USER=nobody cargo new --bin example-service
+RUN cp example-service-tomls/Cargo.* example-service/
+WORKDIR /usr/src/example-service
+RUN cargo build
+RUN cargo build --release
+RUN rm target/debug/example-service
+RUN rm target/release/example-service
+
+FROM rust:latest as builder
+WORKDIR /opt/example-service
+WORKDIR /usr/src/example-service
+COPY --from=0 /usr/src/example-service .
+COPY --from=0 /usr/local/cargo /usr/local/cargo
+COPY . .
+RUN cargo build --release
+RUN cp /usr/src/example-service/target/debug/example-service  /opt/example-service/
+
+FROM ubuntu:bionic as deployment
+WORKDIR /opt/example-service
+COPY --from=1 /opt/example-service/ /opt/example-service
+EXPOSE 8000
+ENTRYPOINT [ "/opt/example-service/example-service" ]
