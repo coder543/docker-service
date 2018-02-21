@@ -11,11 +11,9 @@ RUN cargo build --release
 RUN rm target/debug/example-service
 RUN rm target/release/example-service
 
-FROM rust:latest as builder
+FROM dep_cache as builder
 WORKDIR /opt/example-service
 WORKDIR /usr/src/example-service
-COPY --from=0 /usr/src/example-service .
-COPY --from=0 /usr/local/cargo /usr/local/cargo
 COPY . .
 RUN cargo build
 RUN cp /usr/src/example-service/target/debug/example-service  /opt/example-service/
