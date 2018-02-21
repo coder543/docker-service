@@ -1,25 +1,27 @@
 FROM rust:latest as dep_cache
-WORKDIR /usr/src/example-service-tomls
+ARG image_name
+WORKDIR /usr/src/$image_name-tomls
 COPY Cargo.toml .
 COPY Cargo.lock .
 WORKDIR /usr/src/
-RUN USER=nobody cargo new --bin example-service
-RUN cp example-service-tomls/Cargo.* example-service/
-WORKDIR /usr/src/example-service
+RUN USER=nobody cargo new --bin $image_name
+RUN cp $image_name-tomls/Cargo.* $image_name/
+WORKDIR /usr/src/$image_name
 RUN cargo build
-RUN cargo build --release
-RUN rm target/debug/example-service
-RUN rm target/release/example-service
+RUN rm target/debug/$image_name
 
 FROM dep_cache as builder
-WORKDIR /opt/example-service
-WORKDIR /usr/src/example-service
+ARG image_name
+WORKDIR /opt/service
+WORKDIR /usr/src/$image_name
 COPY . .
 RUN cargo build
-RUN cp /usr/src/example-service/target/debug/example-service  /opt/example-service/
+RUN cp /usr/src/$image_name/target/debug/$image_name  /opt/service/
 
 FROM ubuntu:bionic as deployment
-WORKDIR /opt/example-service
-COPY --from=1 /opt/example-service/ /opt/example-service
+ARG image_name
+WORKDIR /opt/service
+COPY --from=1 /opt/service /opt/service
+RUN ln -s /opt/service/$image_name /opt/start_service
 EXPOSE 8000
-ENTRYPOINT [ "/opt/example-service/example-service" ]
+ENTRYPOINT [ "/opt/start_service" ]
